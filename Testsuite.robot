@@ -4,6 +4,7 @@ Documentation     A test suite for valid login.
 ...               Keywords are imported from the resource file
 Library          SeleniumLibrary
 Library          CustomLibrary.py
+Resource         Keywords.resource
 Default Tags      positive
 
 *** Variables ***
@@ -50,4 +51,11 @@ Check maximum online spend
     ${SHOWN_VALUE}=    Get Text    gbpValue
     Element Text Should Not Be    gbpValue    150000
     Value Is Lower Than    ${SHOWN_VALUE}    2500
+    [Teardown]    Close Browser
+
+Using keywords to perform maximum spend test
+    Open Royal Mail Currency Converter    ${LOGIN URL}
+    Input Exchange Value    150000
+    Place The Order
+    Ensure Value Is Lower Than    2500
     [Teardown]    Close Browser

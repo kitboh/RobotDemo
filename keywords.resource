@@ -2,33 +2,30 @@
 Documentation     This is a resource file, that can contain variables and keywords.
 ...               Keywords defined here can be used where this Keywords.resource in loaded.
 Library           SeleniumLibrary
+Library           CustomLibrary.py
 
 
 *** Keywords ***
-Connect to Server
-    Connect    'https://www.whoscored.com/LiveScores'
+Open Royal Mail Currency Converter
+    [Arguments]    ${url}
+    Open Browser    ${url}    Firefox
+    Maximize Browser Window
+    Click Button    ensCloseBanner
 
-Close Server Connection
-    Disconnect
+Input Exchange Value
+    [Documentation]    This adds a value of currency to be exchanged
+    [Arguments]    ${value}
+    Input Text    tmGBPvalue    150000
+    Wait Until Element Contains    tmRatesSummary    Today’s online rate
 
-Login User
-    [Arguments]    ${login}    ${password}
-    Set Login Name    ${login}
-    Set Password    ${password}
-    Execute Login
+Place The Order
+    Click Element    tmPlaceOrder
+    Wait Until Element Is Visible    accept_all_button
+    Click Element    accept_all_button
+    Wait Until Element Is Visible    gbpValue
 
-Verify Valid Login
-    [Arguments]    ${exp_full_name}
-    ${version}=    Get Server Version
-    Should Not Be Empty    ${version}
-    ${name}=    Get User Name
-    Should Be Equal    ${name}    ${exp_full_name}
-
-Verify Unauthorised Access
-    Run Keyword And Expect Error    PermissionError*    Get Server Version
-
-Login Admin
-    [Documentation]    'Login Admin' is a Keyword.
-    ...                It calls 'Login User' from 'CustomLibrary.py'
-    Login User    admin    @RBTFRMWRK@
-    Verify Valid Login    Administrator
+Ensure Value Is Lower Than
+    [Arguments]    ${value}
+    ${SHOWN_VALUE}=    Get Text    gbpValue
+    Element Text Should Not Be    gbpValue    150000
+    Value Is Lower Than    ${SHOWN_VALUE}    2500
